@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" sizes="32x32" href="temperaturaLogo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="temperaturaLogo.png">
+    <title>Inteligencia Artificial II</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <style>
+      #resultado {
+        font-weight:  bold;
+        font-size:  1.2rem;
+        text-align: center;
+      }
+    </style>
+
+  </head>
+  <body class="bg-dark text-secondary">
+    
+    <main>
+      <div class="px-4 py-2 text-center border-bottom border-3">
+        <img class="d-block mx-auto mb-4" src="temperaturaLogo.png" alt="" width="200" height="200">
+        <h1 class="display-5 fw-bold mb-4 text-white">Conversi&oacute;n de Temperatura</h1>
+        <div class="col-lg-6 mx-auto">
+          <p class="fs-5 mb-4">Conversi&oacute;n de grados celsius (variable independiente) a otra temperatura aplicando redes neuronales e utilizando Tensorflow.js</p>
+        </div>
+      </div>
+
+      <div class="container mt-5">
+        <div class="row">
+          <div class="col-12 col-md-4 offset-md-4">
+            <form>
+              <div class="mb-3">
+                <label for="celsius" class="form-label text-white">Grados Celsius: 
+                <div class="form-text">Ingresa en el campo de texto los grados celsius a convertir</div>
+                <!-- <span id="lbl-celsius">0</span></label> -->
+                <br>
+                <!-- <input type="range" class="form-range" min="-200" max="200" id="celsius" oninput="cambiarCelsius();"> -->
+                <input type="text" class="text-white bg-dark" id="celsius" oninput="cambiarCelsius();" placeholder="0">
+                
+              </div>  
+              <div class="mb-3">
+                <label for="celsius" class="form-label text-white">Resultado</label>
+                <div id="resultado1" class="fs-5 mb-4">
+                  0 grados celsius son 32 grados fahrenheit
+                </div>
+                <div id="resultado2" class="fs-5 mb-4">
+                  0 grados celsius son 273 grados kelvin
+                </div>
+                <div id="resultado3" class="fs-5 mb-4">
+                  0 grados celsius son 491 grados rankine
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+
+    <script type="text/javascript">
+
+      var modelo = null;
+      var modelo2 = null;
+      var modelo3 = null;
+
+      //Cargar modelo
+      (async () => {
+          console.log("Se esta Cargando los modelos...");
+          modelo = await tf.loadLayersModel("model.json");
+          modelo2 = await tf.loadLayersModel("model2.json");
+          modelo3 = await tf.loadLayersModel("model3.json");
+          console.log("¡Modelos cargados correctamente!");
+      })();
+
+      function cambiarCelsius() {
+        var celsius = document.getElementById("celsius").value;
+        // document.getElementById("lbl-celsius").innerHTML=celsius;
+        if (modelo != null) {
+          var tensor = tf.tensor1d([parseInt(celsius)]);
+          var tensor2 = tf.tensor1d([parseInt(celsius)]);
+          var tensor3 = tf.tensor1d([parseInt(celsius)]);
+          var prediccion = modelo.predict(tensor).dataSync();
+          var prediccion2 = modelo2.predict(tensor2).dataSync();
+          var prediccion3 = modelo3.predict(tensor3).dataSync();
+          prediccion = Math.round(prediccion, 1);
+          prediccion2 = Math.round(prediccion2, 1);
+          prediccion3 = Math.round(prediccion3, 1);
+          document.getElementById("resultado1").innerHTML = celsius + " celsius son " + prediccion + " fahrenheit";
+          document.getElementById("resultado2").innerHTML = celsius + " celsius son " + prediccion2 + " kelvin";
+          document.getElementById("resultado3").innerHTML = celsius + " celsius son " + prediccion3 + " rankine";
+        } else {
+          document.getElementById("resultado1").innerHTML = "Intenta de nuevo en un momento...";
+          document.getElementById("resultado2").innerHTML = "Intenta de nuevo en un momento...";
+          document.getElementById("resultado3").innerHTML = "Intenta de nuevo en un momento...";
+        }
+      }
+    </script>
+  </body>
+</html>
